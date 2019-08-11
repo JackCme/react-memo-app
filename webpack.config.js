@@ -5,6 +5,7 @@ module.exports = {
     entry: [
         '@babel/polyfill',
         './src/client/index.js',
+        './src/client/style.css',
     ],
 
     output: {
@@ -55,6 +56,6 @@ module.exports = {
     },
 
     resolve: {
-        root: path.resolve('./src/client')
+        modules: ['node_modules', path.resolve(__dirname, 'src/client')]
     }
 }

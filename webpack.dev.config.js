@@ -81,9 +81,7 @@ module.exports = {
                 test: /\.css$/,
                 include: path.resolve(__dirname, 'src/client'),
                 use: [
-                    {
-                        loader: 'style!css-loader'
-                    }
+                    'style-loader', 'css-loader'
                 ]
             }
         ]
@@ -91,6 +89,6 @@ module.exports = {
 
 
     resolve: {
-        root: path.resolve('./src/client')
+        modules: ['node_modules', path.resolve(__dirname, 'src/client')]
     }
 }
