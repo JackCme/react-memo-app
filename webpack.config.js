@@ -29,6 +29,15 @@ module.exports = {
                         }
                     },
                 ],
+            },
+            {
+                test: /\.css$/,
+                include: path.resolve(__dirname, 'src/client'),
+                use: [
+                    {
+                        loader: 'style!css-loader'
+                    }
+                ]
             }
         ]
     },
