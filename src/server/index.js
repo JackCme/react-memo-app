@@ -48,6 +48,11 @@ app.use(function (err, req, res, next) {
     res.status(500).send('Something broke!');
 });
 
+/* support client-side routing */
+app.get('*', (req, res) => {
+    res.sendFile(path.resolve(__dirname, './../../public/index.html'))
+})
+
 app.listen(port, () => {
     console.log('Express is listening on port', port);
 });
