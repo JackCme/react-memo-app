@@ -43,5 +43,9 @@ module.exports = {
 
     optimization: {
         minimize: true
+    },
+
+    resolve: {
+        root: path.resolve('./src/client')
     }
 }
