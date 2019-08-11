@@ -15,6 +15,7 @@ module.exports = {
         'webpack-dev-server/client?http://localhost:4000',
         'webpack/hot/dev-server',
         './src/client/index.js',
+        './src/client/style.css',
     ],
 
     mode: 'development',
