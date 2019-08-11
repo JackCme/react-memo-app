@@ -1,6 +1,6 @@
 # What is this?
 - A simple memo app based on Reactjs, Mongodb and Expressjs
-- Codelab from @Velopert refined to use Webpack 4 and Babel 7
+- Codelab from [@velopert](https://github.com/velopert) refined to use Webpack 4 and Babel 7
 ## Usage
 1. Clone this repository.
 2. In shell, terminal, cmd or whatever, run:
