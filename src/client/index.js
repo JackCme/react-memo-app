@@ -11,7 +11,6 @@ ReactDOM.render(
         <Route exact path="/" component={Home} />
         <Route path="/login" component={Login} />
         <Route path="/register" component={Register} />
-        
     </Router>, rootElement)
 
 if (module.hot) {
