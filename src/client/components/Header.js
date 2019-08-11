@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
+import { Link } from 'react-router-dom'
 
 export class Header extends Component {
     static propTypes = {
@@ -28,7 +29,7 @@ export class Header extends Component {
         return (
             <nav>
                 <div className="nav-wrapper blue darken-1">
-                    <a className="brand-logo center">Memopad</a>
+                    <Link to="/" className="brand-logo center">Memopad</Link>
                     <ul>
                         <li><a><i className="material-icons">search</i></a></li>
                     </ul>

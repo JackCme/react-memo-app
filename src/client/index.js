@@ -7,11 +7,11 @@ import { App, Home, Login, Register } from 'containers'
 const rootElement = document.getElementById("root")
 ReactDOM.render(
     <Router>
-        <App>
-            <Route exact path="/" component={Home} />
-            <Route path="/login" component={Login} />
-            <Route path="/register" component={Register} />
-        </App>
+        <Route path="/" component={App}/> 
+        <Route exact path="/" component={Home} />
+        <Route path="/login" component={Login} />
+        <Route path="/register" component={Register} />
+        
     </Router>, rootElement)
 
 if (module.hot) {
