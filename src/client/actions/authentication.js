@@ -3,10 +3,22 @@ import {
     AUTH_LOGIN_SUCCESS,
     AUTH_LOGIN_FAILURE
  } from './ActionTypes'
+ import axios from 'axios'
 
  export function loginRequest(username, password) {
-     /* To be implemented */
- }
+    return (dispatch) => {
+        dispatch(login())
+
+        return axios.post('/api/account/signin', {username, password})
+                    .then((response) => {
+                        dispatch(loginSuccess(username))
+                    })
+                    .catch((err) => {
+                        dispatch(loginFailure())
+                    })
+    }
+    
+}
 
  export function login() {
      return {

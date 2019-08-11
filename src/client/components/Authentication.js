@@ -30,7 +30,22 @@ export class Authentication extends Component {
         this.setState(nextState)
     }
     
+    handleLogin = () => {
+        let id = this.state.username
+        let pw = this.state.password
 
+        this.props.onLogin(id, pw).then(
+            (success) => {
+                if(!success) {
+                    this.setState({
+                        password: ''
+                    })
+                }
+            }
+            
+        )
+    }
+    
     render() {
         const inputBoxes = (
             <div>
@@ -57,7 +72,8 @@ export class Authentication extends Component {
                 <div className="card-content">
                     <div className="row">
                         {inputBoxes}
-                        <a className="waves-effect waves-light btn">LOGIN</a>
+                        <a className="waves-effect waves-light btn"
+                            onClick={this.handleLogin}>LOGIN</a>
                     </div>
 
                     <div className="footer">
