@@ -45,6 +45,33 @@ export class Authentication extends Component {
             
         )
     }
+
+    handleRegister = () => {
+        let id = this.state.username
+        let pw = this.state.password
+
+        this.props.onRegister(id, pw).then(
+            (result) => {
+                if(!result) {
+                    this.setState({
+                        username: '',
+                        password: ''
+                    })
+                }
+            }
+        )
+    }
+    
+    handleKeyPress = (e) => {
+        if(e.charCode == 13) {
+            if(this.props.mode) {
+                this.handleLogin()
+            }
+            else {
+                this.handleRegister()
+            }
+        }
+    }
     
     render() {
         const inputBoxes = (
@@ -63,7 +90,8 @@ export class Authentication extends Component {
                         name="password"
                         className="validate"
                         onChange={this.handleChange}
-                        value={this.state.password}/>
+                        value={this.state.password}
+                        onKeyPress={this.handleKeyPress}/>
                 </div>
             </div>
         )
@@ -90,7 +118,8 @@ export class Authentication extends Component {
             <div className="card-content">
                 <div className="row">
                     {inputBoxes}
-                    <a className="waves-effect waves-light btn">REGISTER</a>
+                    <a className="waves-effect waves-light btn"
+                        onClick={this.handleRegister}>REGISTER</a>
                 </div>
             </div>
         )

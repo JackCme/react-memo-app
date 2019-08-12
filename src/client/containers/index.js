@@ -6,4 +6,5 @@ export { Home } from './Home'
 import Login from './Login'
 export { Login }
 
-export { Register } from './Register'
+import Register from './Register'
+export { Register }
