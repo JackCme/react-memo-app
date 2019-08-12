@@ -63,7 +63,7 @@ export class Authentication extends Component {
                         name="password"
                         className="validate"
                         onChange={this.handleChange}
-                        value={this.state.username}/>
+                        value={this.state.password}/>
                 </div>
             </div>
         )
