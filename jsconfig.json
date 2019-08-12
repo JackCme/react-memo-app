@@ -1,0 +1,25 @@
+{
+    "compilerOptions": {
+        "target": "es2017",
+        "allowSyntheticDefaultImports": false,
+        "baseUrl": "./src/client/",
+        "paths": {
+            "actions/*": [
+                "actions/*"
+            ],
+            "components/*": [
+                "components/*"
+            ],
+            "containers/*": [
+                "containers/*"
+            ],
+            "reducers/*": [
+                "reducers/*"
+            ]
+        }
+    },
+    "exclude": [
+        "node_modules",
+        "public"
+    ]
+}
