@@ -32,7 +32,7 @@ export class Login extends Component {
             
         )
     }
-    
+
     render() {
         return (
             <div>
@@ -46,7 +46,7 @@ export class Login extends Component {
 
 const mapStateToProps = (state) => {
     return {
-        status: state.authentication.login.status
+        status: state.authentication.login.status,
     }
 }
 

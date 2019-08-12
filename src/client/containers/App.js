@@ -1,8 +1,65 @@
 import React, { Component } from 'react'
 import { Header } from 'components'
+import { connect } from 'react-redux';
+import { getStatusRequest, logoutRequest } from 'actions/authentication'
 
 
 export class App extends Component {
+
+    componentDidMount() {
+        //get cookie by name
+        let getCookie = (name) => {
+            let value = "; " + document.cookie
+            let parts = value.split('; ' + name + '=')
+            if(parts.length == 2) 
+                return parts.pop().split(";").shift()
+        }
+        
+        //get logindata from cookie
+        let loginData = getCookie('key')
+
+        //if loginData is undefined, do noting
+        if(typeof loginData === "undefined") return
+
+        //decode base64 & parse json
+        loginData = JSON.parse(atob(loginData))
+
+        //if not logged in, do nothing
+        if(!loginData.isLoggedIn) return
+
+        this.props.getStatusRequest().then(
+            () => {
+                console.log("App props: " + JSON.stringify(this.props.status, null, 2))
+                if(!this.props.status.valid) {
+                    loginData = {
+                        isLoggedIn: false,
+                        username: ''
+                    }
+
+                    document.cookie = 'key=' + btoa(JSON.stringify(loginData))
+                    let $toastContent = $('<span style="color: #FFB4BA">Your session is expired, please log in again</span>');
+                    Materialize.toast($toastContent, 4000);
+                }
+
+            }
+        )
+    }
+    
+    handleLogout = () => {
+        this.props.logoutRequest().then(
+            () => {
+                Materialize.toast('Good Bye!', 2000)
+
+                let loginData = {
+                    isLoggedIn: false,
+                    username: ''
+                }
+
+                document.cookie = 'key=' + btoa(JSON.stringify(loginData))
+            }
+        )
+    }
+    
     render() {
         //로그인 회원가입 페이지는 헤더 보이지 않게 하기
         let re = /(login|register)/
@@ -10,11 +67,30 @@ export class App extends Component {
 
         return (
             <div>
-                {isAuth ? undefined: <Header />}
+                {isAuth ? undefined: <Header isLoggedIn={this.props.status.isLoggedIn}
+                                            onLogout={this.handleLogout}/>}
                 {this.props.children}
             </div>
         )
     }
 }
 
-export default App
+const mapStateToProps = (state) => {
+    return {
+        status: state.authentication.status
+    }
+}
+
+const mapDispatchToProps = (dispatch) => {
+    return {
+        getStatusRequest: () => {
+            return dispatch(getStatusRequest())
+        },
+        logoutRequest: () => {
+            return dispatch(logoutRequest())
+        }
+    }
+}
+
+
+export default connect(mapStateToProps, mapDispatchToProps)(App) 

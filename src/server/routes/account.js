@@ -16,8 +16,8 @@ const router = express.Router()
 router.post('/signup', (req, res) => {
     //Checks username format
     let usernameRegex = /^[a-z0-9_]+$/
-    let username = req.body.username
-    if(!usernameRegex.test(username) && (username.length < 4 || username.length > 20)) {
+    let username = req.body.username.toLowerCase()
+    if(!usernameRegex.test(username) || username.length <= 4 || username.length >= 20) {
         return res.status(400).json({
             error: "Bad username",
             code: 1001
@@ -26,7 +26,7 @@ router.post('/signup', (req, res) => {
 
     //Checks password length
     let password = req.body.password
-    if (password.length < 4 || typeof password !== "string") {
+    if (password.length <= 4 || typeof password !== "string") {
         return res.status(400).json({
             error: "Bad password",
             code: 1002
@@ -45,7 +45,7 @@ router.post('/signup', (req, res) => {
 
         //create account
         let account = new Account({
-            username: req.body.username,
+            username: req.body.username.toLowerCase(),
             password: req.body.password
         })
 
@@ -79,7 +79,7 @@ router.post('/signin', (req, res) => {
     }
 
     //find user by username
-    Account.findOne({ username: req.body.username }, (err, account) => {
+    Account.findOne({ username: req.body.username.toLowerCase() }, (err, account) => {
         if(err) throw err
         if(!account) {
             return res.status(401).json({
@@ -88,6 +88,12 @@ router.post('/signin', (req, res) => {
             })
         }
 
+        if(!account.validateHash(req.body.password)) {
+            return res.status(403).json({
+                error: 'login failed',
+                code: 1001
+            })
+        }
         //alter sesson
         let session = req.session
         session.loginInfo = {
@@ -106,7 +112,7 @@ router.post('/signin', (req, res) => {
 | Get current user info: GET /api/account/getInfo
 |--------------------------------------------------
 */
-router.get('/getinfo', (req, res) => {
+router.get('/getInfo', (req, res) => {
     if(typeof req.session.loginInfo === 'undefined') {
         return res.status(401).json({
             error: 1001

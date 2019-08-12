@@ -15,8 +15,8 @@ const initialState = {
     }
 }
 
-export default (state = initialState, { type, payload }) => {
-    switch (type) {
+export default (state = initialState, action) => {
+    switch (action.type) {
 
     case types.AUTH_LOGIN:
         return update(state, {
@@ -62,7 +62,39 @@ export default (state = initialState, { type, payload }) => {
         return update(state, {
             register: {
                 status: { $set: 'FAILURE' },
-                error: { $set: payload.error }
+                error: { $set: action.error }
+            }
+        })
+
+    case types.AUTH_GET_STATUS:
+        return update(state, {
+            status: {
+                isLoggedIn: { $set: true }
+            }
+        })
+    
+    case types.AUTH_GET_STATUS_SUCCESS:
+        return update(state, {
+            status: {
+                valid: { $set: true },
+                currentUser: { $set: action.username }
+            }
+        })
+
+    case types.AUTH_GET_STATUS_FAILURE:
+        return update(state, {
+            status: {
+                valid: { $set: false },
+                isLoggedIn: { $set: false }
+            }
+        })
+    
+    case types.AUTH_LOGOUT:
+        return update(state, {
+            status: {
+                isLoggedIn: { $set: false },
+                currentUser: { $set: '' },
+                
             }
         })
     default:
