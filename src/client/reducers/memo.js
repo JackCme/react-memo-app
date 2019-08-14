@@ -5,11 +5,16 @@ const initialState = {
     post: {
         status: 'INIT',
         error: -1
+    },
+    list: {
+        status: 'INIT',
+        data: [],
+        isLast: false
     }
 }
 
-export default (state = initialState, { type, payload }) => {
-    switch (type) {
+export default (state = initialState, action) => {
+    switch (action.type) {
         case types.MEMO_POST:
             return update(state, {
                 post: {
@@ -28,6 +33,31 @@ export default (state = initialState, { type, payload }) => {
                 post: {
                     status: { $set: 'FAILURE' },
                     error: { $set: payload }
+                }
+            })
+        case types.MEMO_LIST:
+            return update(state, {
+                list: {
+                    status: { $set: 'WAITING' }
+                }
+            })
+        case types.MEMO_LIST_SUCCESS:
+            if(action.isInitial) {
+                return update(state, {
+                    list: {
+                        status: { $set: 'SUCCESS' },
+                        data: { $set: action.data },
+                        isLast: { $set: action.data.length < 6 }
+                    }
+                })
+            }
+
+            return state
+
+        case types.MEMO_LIST_FAILURE:
+            return update(state, {
+                list: {
+                    status: { $set: 'FAILIRE' }
                 }
             })
         default:
