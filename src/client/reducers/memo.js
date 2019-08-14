@@ -51,6 +51,25 @@ export default (state = initialState, action) => {
                     }
                 })
             }
+            else {
+                if(action.listType === 'new') {
+                    return update(state, {
+                        list: {
+                            status: { $set: 'SUCCESS'},
+                            data: { $unshift: action.data }
+                        }
+                    })
+                }
+                else {
+                    return update(state, {
+                        list: {
+                            status: { $set: 'SCUCESS' },
+                            data: { $push: action.data },
+                            isLast: { $set: action.data.length < 6 }
+                        }
+                    })
+                }
+            }
 
             return state
 

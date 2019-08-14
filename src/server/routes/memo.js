@@ -192,4 +192,51 @@ router.get('/', (req, res) => {
         })
 })
 
+/**
+|--------------------------------------------------
+| Read additional old/new memos: GET /api/memo/:listType/:id
+|--------------------------------------------------
+*/
+router.get('/:listType/:id', (req, res) => {
+    let listType = req.params.listType
+    let id = req.params.id
+
+    if(listType !== 'old' && listType !== 'new') {
+        return res.status(400).json({
+            error: 'INVALID LIST TYPE',
+            code: 1001
+        })
+    }
+
+    if(!mongoose.Types.ObjectId.isValid(id)) {
+        return res.status(400).json({
+            error: 'INVALID ID',
+            code: 1002
+        })
+    }
+
+    let objectId = new mongoose.Types.ObjectId(req.params.id)
+
+    if(listType === 'new') {
+        //get newer memo
+        Memo.find({ _id: { $gt: objectId }})
+            .sort({ _id: -1 })
+            .limit(6)
+            .exec((err, memos) => {
+                if(err) throw err
+                return res.json(memos)
+            })
+    }
+    else {
+        //get older memo
+        Memo.find({ _id: { $lt: objectId }})
+            .sort({ _id: -1 })
+            .limit(6)
+            .exec((err, memos) => {
+                if(err) throw err
+                return res.json(memos)
+            })
+    }
+})
+
 export default router
