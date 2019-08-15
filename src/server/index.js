@@ -32,15 +32,17 @@ app.use(session({
 }))
 
 
-app.use('/', express.static(path.join(__dirname, './../../public')));
+app.use('/', express.static(path.join(__dirname, process.env.NODE_ENV == 'development' ? './../../public' : './../public')));
 
 /* routes */
 import api from './routes'
 app.use('/api', api)
 
+
+/* support client-side routing */
 app.get('*', (req, res) => {
-    res.sendFile(path.resolve(__dirname, './../../public/index.html'));
-});
+    res.sendFile(path.resolve(__dirname, process.env.NODE_ENV == 'development' ? './../../public/index.html' : './../public/index.html'))
+})
 
 
 /* handle error */
@@ -49,10 +51,6 @@ app.use(function (err, req, res, next) {
     res.status(500).send('Something broke!');
 });
 
-/* support client-side routing */
-app.get('*', (req, res) => {
-    res.sendFile(path.resolve(__dirname, './../../public/index.html'))
-})
 
 app.listen(port, () => {
     console.log('Express is listening on port', port);

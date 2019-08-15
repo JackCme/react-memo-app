@@ -13,6 +13,8 @@ module.exports = {
         filename: 'bundle.js'
     },
 
+    mode: 'production',
+
     module: {
         rules: [
             {
@@ -35,9 +37,7 @@ module.exports = {
                 test: /\.css$/,
                 include: path.resolve(__dirname, 'src/client'),
                 use: [
-                    {
-                        loader: 'style!css-loader'
-                    }
+                    'style-loader', 'css-loader'
                 ]
             }
         ]
