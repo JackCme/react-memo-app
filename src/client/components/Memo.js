@@ -91,6 +91,10 @@ export class Memo extends Component {
         $(`#dropdown-button-${this.props.data._id}`).dropdown({
             belowOrigin: true //displays dropdown below the origin button
         })
+
+        if(this.state.editMode) {
+            $(this.input).keyup()
+        }
     }
 
     componentDidMount() {
@@ -165,6 +169,7 @@ export class Memo extends Component {
                 <div className="card">
                     <div className="card-content">
                         <textarea
+                            ref={ref => {this.input = ref}}
                             className="materialize-textarea"
                             value={this.state.value}
                             onChange={this.handleChange}></textarea>
