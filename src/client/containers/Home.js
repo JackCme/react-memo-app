@@ -112,8 +112,9 @@ export class Home extends Component {
                     Materialize.toast($toastContent, 2000);
 
                     if(error === 1003) {
+                        console.log(this.props.location)
                         setTimeout(() => {
-                            this.props.location.reload(false)
+                            this.props.history.replace(this.props.location.pathname)
                         }, 200);
                     }
                 }
@@ -148,7 +149,7 @@ export class Home extends Component {
 
                     // IF NOT LOGGED IN, REFRESH THE PAGE
                     if (this.props.removeStatus.error === 2) {
-                        setTimeout(() => { location.reload(false) }, 2000);
+                        setTimeout(() => { this.props.history.replace(this.props.location.pathname) }, 2000);
                     }
                 }
             }
@@ -173,7 +174,7 @@ export class Home extends Component {
 
                     // IF NOT LOGGED IN, REFRESH THE PAGE
                     if (this.props.starStatus.error === 2) {
-                        setTimeout(() => { this.props.location.reload(false) }, 2000);
+                        setTimeout(() => { this.props.history.replace(this.props.location.pathname) }, 2000);
                     }
                 }
             }
