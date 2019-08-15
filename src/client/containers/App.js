@@ -3,7 +3,7 @@ import { Header } from 'components'
 import { connect } from 'react-redux';
 import { getStatusRequest, logoutRequest } from 'actions/authentication'
 import { Route } from 'react-router-dom'
-import { Home, Login, Register } from 'containers'
+import { Home, Login, Register, Wall } from 'containers'
 
 
 export class App extends Component {
@@ -75,6 +75,7 @@ export class App extends Component {
                 <Route exact path="/" component={Home} />
                 <Route path="/login" component={Login} />
                 <Route path="/register" component={Register} />
+                <Route path="/wall/:username" component={Wall} />
 
             </div>
         )

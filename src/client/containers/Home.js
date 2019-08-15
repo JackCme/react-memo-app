@@ -7,10 +7,12 @@ import {
     memoEditRequest, 
     memoRemoveRequest,
     memoStarRequest } from 'actions/memo'
+import PropTypes from 'prop-types'
 
 export class Home extends Component {
     state = {
-        loadingState: false
+        loadingState: false,
+        initiallyLoaded: false,
     }
 
     handlePost = (contents) => {
@@ -61,10 +63,10 @@ export class Home extends Component {
 
         //if page is empty, do the initial loading
         if(this.props.memoData.length === 0) {
-            return this.props.memoListRequest(true)
+            return this.props.memoListRequest(true, undefined, undefined, this.props.username)
         }
 
-        return this.props.memoListRequest(false, 'new', this.props.memoData[0]._id)
+        return this.props.memoListRequest(false, 'new', this.props.memoData[0]._id, this.props.username)
     }
     
     loadOldMemo = () => {
@@ -78,7 +80,7 @@ export class Home extends Component {
         let lastId = this.props.memoData[this.props.memoData.length - 1]._id
 
         //start request
-        return this.props.memoListRequest(false, 'old', lastId).then(
+        return this.props.memoListRequest(false, 'old', lastId, this.props.username).then(
             () => {
                 //if this is last page, notify
                 if(this.props.isLast) {
@@ -220,10 +222,13 @@ export class Home extends Component {
             }
         })
 
-        this.props.memoListRequest(true).then(
+        this.props.memoListRequest(true, undefined, undefined, this.props.username).then(
             () => {
+                setTimeout(loadUntilScrollable, 1000)
                 loadMemoLoop()
-                loadUntilScrollable()
+                this.setState({
+                    initiallyLoaded: true
+                })
             }
         )
         
@@ -235,16 +240,55 @@ export class Home extends Component {
 
         //remove window scroll listener
         $(window).unbind()
+
+        this.setState({
+            initiallyLoaded: false
+        })
     }
     
+    componentDidUpdate(prevProps, prevState) {
+        if(this.props.username !== prevProps.username) {
+            this.componentWillUnmount()
+            this.componentDidMount()
+        }
+    }
     
     render() {
         const write = ( 
             <Write onPost={this.handlePost}/> 
         )
+
+        const emptyView = (
+            <div className="container">
+                <div className="empty-page">
+                    <b>{this.props.username}</b> isn't registered or hasn't written any memo
+                </div>
+            </div>
+        )
+
+        const wallHeader = (
+            <div>
+                <div className="container wall-info">
+                    <div className="card wall-info blue lighten-2 white-text">
+                        <div className="card-content">
+                            {this.props.username}
+                        </div>
+                    </div>
+                </div>
+                {this.props.memoData.length === 0 && this.state.initiallyLoaded 
+                    ? emptyView 
+                    : undefined}
+            </div>
+        )
+
         return (
             <div className="wrapper">
-                { this.props.isLoggedIn ? write : undefined }
+                { typeof this.props.username !== "undefined"
+                    ? wallHeader
+                    : undefined }
+                { this.props.isLoggedIn && typeof this.props.username === "undefined" 
+                    ? write 
+                    : undefined }
                 <MemoList data={this.props.memoData}
                     currentUser={this.props.currentUser}
                     onEdit={this.handleEdit}
@@ -289,5 +333,11 @@ const mapDispatchToProps = (dispatch) => {
     }
 }
 
+Home.propTypes = {
+    username: PropTypes.string
+}
 
+Home.defaultProps = {
+    username: undefined
+}
 export default connect(mapStateToProps, mapDispatchToProps)(Home)

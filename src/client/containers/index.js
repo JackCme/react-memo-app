@@ -12,3 +12,6 @@ export { Login }
 
 import Register from './Register'
 export { Register }
+
+import Wall from './Wall'
+export { Wall }

@@ -301,4 +301,70 @@ router.post('/star/:id', (req, res) => {
     })
 })
 
+/**
+|--------------------------------------------------
+| Read memo of a user: GET /api/memo/:username
+|--------------------------------------------------
+*/
+router.get('/:username', (req, res) => {
+    Memo.find({writer: req.params.username})
+        .sort({_id: -1})
+        .limit(6)
+        .exec((err, memos) => {
+            if(err) throw err
+            res.json(memos)
+        })
+})
+
+/**
+|--------------------------------------------------
+| Read additional old/new memo of a user: GET /api/memo/:username/:listType/:id
+| Error codes:
+|   1001: INVALID LISTTYPE
+|   1002: INVALID ID
+|--------------------------------------------------
+*/
+router.get('/:username/:listType/:id', (req, res) => {
+    let listType = req.params.listType
+    let id = req.params.id
+    
+    //check list type validity
+    if(listType !== 'old' && listType !== 'new') {
+        return res.status(400).json({
+            error: 'INVALID LISTTYPE',
+            code: 1001
+        })
+    }
+    //check memo id validity
+    if(!mongoose.Types.ObjectId.isValid(id)) {
+        return res.status(400).json({
+            error: "INVALID ID",
+            code: 1002
+        })
+    }
+
+    let objectId = new mongoose.Types.ObjectId(id)
+
+    if(listType === 'new') {
+        //get newer memo
+        Memo.find({ writer: req.params.username, _id: { $gt: objectId }})
+            .sort({_id: -1})
+            .limit(6)
+            .exec((err, memos) => {
+                if(err) throw err
+                return res.json(memos)
+            })
+    }
+    else {
+        //get older memo
+        Memo.find({ writer: req.params.username, _id: { $lt: objectId }})
+            .sort({_id: -1})
+            .limit(6)
+            .exec((err, memos) => {
+                if(err) throw err
+                return res.json(memos)
+            })
+    }   
+})
+
 export default router
