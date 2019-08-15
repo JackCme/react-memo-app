@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { Memo } from 'components'
 import PropTypes from 'prop-types'
+import {CSSTransition, TransitionGroup} from 'react-transition-group'
 
 export class MemoList extends Component {
     static propTypes = {
@@ -24,21 +25,28 @@ export class MemoList extends Component {
         const mapToComponents = (data) => {
             return data.map((memo, i) => {
                 return (
-                    <Memo
-                        data={memo}
-                        ownership={ (memo.writer === this.props.currentUser)}
-                        key={memo._id}
-                        index={i}
-                        onEdit={this.props.onEdit}
-                        onRemove={this.props.onRemove}
+                    <CSSTransition classNames="memo"
+                                    timeout={1000}
+                                    key={memo._id}>
+                        <Memo
+                            data={memo}
+                            ownership={(memo.writer === this.props.currentUser)}
+                            key={memo._id}
+                            index={i}
+                            onEdit={this.props.onEdit}
+                            onRemove={this.props.onRemove}
                         />
+                    </CSSTransition>
+                    
                 )
             })
         }
         
         return (
             <div>
-                {mapToComponents(this.props.data)}
+                <TransitionGroup>
+                    {mapToComponents(this.props.data)}
+                </TransitionGroup>
             </div>
         )
     }

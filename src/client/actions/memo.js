@@ -128,7 +128,7 @@ export const memoRemoveRequest = (id, index) => {
     return dispatch => {
         dispatch(memoRemove())
 
-        return axios.delete('/api/memo' + id)
+        return axios.delete('/api/memo/' + id)
                     .then(response => {
                         dispatch(memoRemoveSuccess(index))
                     })
