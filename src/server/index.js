@@ -38,19 +38,16 @@ app.use('/', express.static(path.join(__dirname, process.env.NODE_ENV == 'develo
 import api from './routes'
 app.use('/api', api)
 
-
 /* support client-side routing */
 app.get('*', (req, res) => {
     res.sendFile(path.resolve(__dirname, process.env.NODE_ENV == 'development' ? './../../public/index.html' : './../public/index.html'))
 })
-
 
 /* handle error */
 app.use(function (err, req, res, next) {
     console.error(err.stack);
     res.status(500).send('Something broke!');
 });
-
 
 app.listen(port, () => {
     console.log('Express is listening on port', port);
