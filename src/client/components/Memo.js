@@ -97,7 +97,7 @@ export class Memo extends Component {
                 </a>
                 <ul id={`dropdown-${data._id}`} className='dropdown-content'>
                     <li><a onClick={this.toggleEdit}>Edit</a></li>
-                    <li><a>Remove</a></li>
+                    <li><a onClick={this.handleRemove}>Remove</a></li>
                 </ul>
             </div>
         )
