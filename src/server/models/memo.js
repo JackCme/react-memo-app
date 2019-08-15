@@ -4,7 +4,7 @@ const Schema = mongoose.Schema
 
 const Memo = new Schema({
     writer: String,
-    content: String,
+    contents: String,
     starred: [String],
     date: {
         created: { type: Date, default: Date.now },

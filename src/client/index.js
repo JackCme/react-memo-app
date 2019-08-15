@@ -18,9 +18,6 @@ ReactDOM.render(
     <Provider store={store}>
         <Router>
             <Route path="/" component={App} />
-            <Route exact path="/" component={Home} />
-            <Route path="/login" component={Login} />
-            <Route path="/register" component={Register} />
         </Router>
     </Provider>
     , rootElement)

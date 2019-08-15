@@ -4,8 +4,8 @@ import axios from 'axios'
 export const memoPostRequest = (contents) => {
     return dispatch => {
         dispatch(memoPost())
-
-        return axios.post('/api/memo', {contents})
+        console.log("memo action post request: " + contents)
+        return axios.post('/api/memo', { contents: contents})
                     .then(() => {
                         dispatch(memoPostSuccess())
                     })

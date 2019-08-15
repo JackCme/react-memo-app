@@ -32,7 +32,7 @@ export default (state = initialState, action) => {
             return update(state, {
                 post: {
                     status: { $set: 'FAILURE' },
-                    error: { $set: payload }
+                    error: { $set: action }
                 }
             })
         case types.MEMO_LIST:

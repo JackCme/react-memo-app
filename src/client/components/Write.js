@@ -21,7 +21,7 @@ export class Write extends Component {
 
     handlePost = () => {
         let contents = this.state.contents
-
+        console.log("handle post : " + contents)
         this.props.onPost(contents).then(
             () => {
                 this.setState({
@@ -40,7 +40,8 @@ export class Write extends Component {
                         <textarea className="materialize-textarea"
                             placeholder="Write down your memo"
                             value={this.state.contents}
-                            onChange={this.handleChange}></textarea>
+                            onChange={this.handleChange}
+                            name="contents"></textarea>
                     </div>
                     <div className="card-action">
                         <a onClick={this.handlePost}>POST</a>

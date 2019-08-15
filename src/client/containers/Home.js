@@ -4,6 +4,10 @@ import { Write, MemoList } from 'components'
 import { memoPostRequest, memoListRequest } from 'actions/memo'
 
 export class Home extends Component {
+    state = {
+        loadingState: false
+    }
+
     handlePost = (contents) => {
         return this.props.memoPostRequest(contents).then(
             () => {
@@ -58,6 +62,28 @@ export class Home extends Component {
         return this.props.memoListRequest(false, 'new', this.props.memoData[0]._id)
     }
     
+    loadOldMemo = () => {
+        if(this.props.isLast) {
+            return new Promise((resolve, reject) => {
+                resolve()
+            })
+        }
+
+        //get id of the memo at bottom
+        let lastId = this.props.memoData[this.props.memoData.length - 1]._id
+
+        //start request
+        return this.props.memoListRequest(false, 'old', lastId).then(
+            () => {
+                //if this is last page, notify
+                if(this.props.isLast) {
+                    Materialize.toast('You are reading the last page', 2000)
+                }
+            }
+        )
+    }
+
+
     
     componentDidMount() {
         //load new memo every 5sec
@@ -69,16 +95,53 @@ export class Home extends Component {
             )
         }
         
+        const loadUntilScrollable = () => {
+            //if scrollbar does not exist
+            if ($("body").height() < $(window).height()) {
+                this.loadOldMemo().then(
+                    () => {
+                        //do it recursively unless it's last page
+                        if (!this.props.isLast) {
+                            loadUntilScrollable()
+                        }
+                    }
+                )
+            }
+        }
+
+        $(window).scroll(() => {
+            if($(document).height() - $(window).height() - $(window).scrollTop() < 250) {
+                if(!this.state.loadingState) {
+                    this.loadOldMemo()
+                    this.setState({
+                        loadingState: true
+                    })
+                }
+            }
+            else {
+                if(this.state.loadingState) {
+                    this.setState({
+                        loadingState: false
+                    })
+                }
+            }
+        })
+
         this.props.memoListRequest(true).then(
             () => {
                 loadMemoLoop()
+                loadUntilScrollable()
             }
         )
+        
     }
 
     componentWillUnmount() {
         //stop loadmemoloop
         clearTimeout(this.memoLoaderTimeoutId)
+
+        //remove window scroll listener
+        $(window).unbind()
     }
     
     
@@ -103,6 +166,7 @@ const mapStateToProps = (state) => {
         currentUser: state.authentication.status.currentUser,
         memoData: state.memo.list.data,
         listStatus: state.memo.list.status,
+        isLast: state.memo.list.isLast
     }
 }
 
