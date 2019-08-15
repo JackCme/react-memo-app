@@ -89,4 +89,37 @@ export const memoListFailure = () => {
     }
 }
 
+export const memoEditRequest = (id, index, contents) => {
+    return dispatch => {
+        dispatch(memoEdit())
 
+        return axios.put('/api/memo/' + id, {contents})
+                    .then(response => {
+                        dispatch(memoEditSuccess(index, response.data.memo))
+                    })
+                    .catch(error => {
+                        dispatch(memoEditFailure(error.response.data.code))
+                    })
+    }
+}
+
+export const memoEdit = () => {
+    return {
+        type: types.MEMO_EDIT
+    }
+}
+
+export const memoEditSuccess = (index, memo) => {
+    return {
+        type: types.MEMO_EDIT_SUCCESS,
+        index,
+        memo
+    }   
+}
+
+export const memoEditFailure = (error) => {
+    return {
+        type: types.MEMO_EDIT_FAILURE,
+        error
+    }
+}

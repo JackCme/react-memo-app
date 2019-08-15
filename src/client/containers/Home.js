@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { Write, MemoList } from 'components'
-import { memoPostRequest, memoListRequest } from 'actions/memo'
+import { memoPostRequest, memoListRequest, memoEditRequest } from 'actions/memo'
 
 export class Home extends Component {
     state = {
@@ -83,7 +83,37 @@ export class Home extends Component {
         )
     }
 
+    handleEdit = (id, index,contents) => {
+        return this.props.memoEditRequest(id, index, contents).then(
+            () => {
+                if(this.props.editStatus.status === 'SUCCESS') {
+                    Materialize.toast('Success!', 2000)
+                }
+                else {
+                    let errorMessage = [
+                        'Something broke',
+                        'Please write soemthing',
+                        'You are not logged in',
+                        'That memo does not exist anymore',
+                        'You do not have permission'
+                    ];
 
+                    let error = this.props.editStatus.error
+
+                    // NOTIFY ERROR
+                    let $toastContent = $('<span style="color: #FFB4BA">' + errorMessage[error % 1000 - 1] + '</span>');
+                    Materialize.toast($toastContent, 2000);
+
+                    if(error === 1003) {
+                        setTimeout(() => {
+                            this.props.location.reload(false)
+                        }, 200);
+                    }
+                }
+            }
+        )
+    }
+    
     
     componentDidMount() {
         //load new memo every 5sec
@@ -153,7 +183,8 @@ export class Home extends Component {
             <div className="wrapper">
                 { this.props.isLoggedIn ? write : undefined }
                 <MemoList data={this.props.memoData}
-                    currentUser={this.props.currentUser}/>
+                    currentUser={this.props.currentUser}
+                    onEdit={this.handleEdit}/>
             </div>
         )
     }
@@ -166,7 +197,8 @@ const mapStateToProps = (state) => {
         currentUser: state.authentication.status.currentUser,
         memoData: state.memo.list.data,
         listStatus: state.memo.list.status,
-        isLast: state.memo.list.isLast
+        isLast: state.memo.list.isLast,
+        editStatus: state.memo.edit
     }
 }
 
@@ -177,6 +209,9 @@ const mapDispatchToProps = (dispatch) => {
         },
         memoListRequest: (isInitial, listType, id, username) => {
             return dispatch(memoListRequest(isInitial, listType, id, username))
+        },
+        memoEditRequest: (id, index, contents) => {
+            return dispatch(memoEditRequest(id, index, contents))
         }
     }
 }
