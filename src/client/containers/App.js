@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { Header } from 'components'
 import { connect } from 'react-redux';
 import { getStatusRequest, logoutRequest } from 'actions/authentication'
+import { searchUserRequest } from 'actions/search'
 import { Route } from 'react-router-dom'
 import { Home, Login, Register, Wall } from 'containers'
 
@@ -13,7 +14,7 @@ export class App extends Component {
         let getCookie = (name) => {
             let value = "; " + document.cookie
             let parts = value.split('; ' + name + '=')
-            if(parts.length == 2) 
+            if(parts.length >= 2) 
                 return parts.pop().split(";").shift()
         }
         
@@ -31,7 +32,6 @@ export class App extends Component {
 
         this.props.getStatusRequest().then(
             () => {
-                console.log("App props: " + JSON.stringify(this.props.status, null, 2))
                 if(!this.props.status.valid) {
                     loginData = {
                         isLoggedIn: false,
@@ -62,6 +62,10 @@ export class App extends Component {
         )
     }
     
+    handleSearch = (keyword) => {
+        this.props.searchUserRequest(keyword)
+    }
+    
     render() {
         //로그인 회원가입 페이지는 헤더 보이지 않게 하기
         let re = /(login|register)/
@@ -70,7 +74,10 @@ export class App extends Component {
         return (
             <div>
                 {isAuth ? undefined: <Header isLoggedIn={this.props.status.isLoggedIn}
-                                            onLogout={this.handleLogout}/>}
+                                            onLogout={this.handleLogout}
+                                            onSearch={this.handleSearch}
+                                            usernames={this.props.usernames}
+                                            {...this.props}/>}
 
                 <Route exact path="/" component={Home} />
                 <Route path="/login" component={Login} />
@@ -84,7 +91,9 @@ export class App extends Component {
 
 const mapStateToProps = (state) => {
     return {
-        status: state.authentication.status
+        status: state.authentication.status,
+        searchStatus: state.search.status,
+        usernames: state.search.usernames
     }
 }
 
@@ -95,6 +104,9 @@ const mapDispatchToProps = (dispatch) => {
         },
         logoutRequest: () => {
             return dispatch(logoutRequest())
+        },
+        searchUserRequest: (keyword) => {
+            return dispatch(searchUserRequest(keyword))
         }
     }
 }

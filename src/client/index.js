@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom'
 //Router
 import { BrowserRouter as Router, Route } from 'react-router-dom'
 //Components
-import { App } from 'containers'
+import { App, Home, Login, Register, Wall  } from 'containers'
 //Redux
 import { Provider } from 'react-redux'
 import { createStore, applyMiddleware } from 'redux'

@@ -80,8 +80,6 @@ export class Memo extends Component {
     }
     
     handleStar = () => {
-        console.log(this.props)
-        console.log(this.state)
         let id = this.props.data._id
         let index = this.props.index
         this.props.onStar(id, index)

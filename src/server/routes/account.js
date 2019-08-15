@@ -133,4 +133,32 @@ router.post('/logout', (req, res) => {
     return res.json({ success: true })
 })
 
+/**
+|--------------------------------------------------
+| Search a user: GET /api/account/search/:username
+|--------------------------------------------------
+*/
+router.get('/search/:username', (req, res) => {
+    //block empty search request
+    if(req.params.username && req.params.username.trim() !== '' ) {
+        //search usernames that starts with given keyword using regex
+        let re = new RegExp('^' + req.params.username)
+
+        Account.find({ username: { $regex: re } }, { _id: true, username: true })
+            .limit(5)
+            .sort({ username: 1 })
+            .exec((err, accounts) => {
+                if (err) throw err
+                res.json(accounts)
+            })
+    }
+    else {
+        res.json([])
+    }
+    
+})
+
+router.get('/search', (req, res) => {
+    res.json([])
+})
 export default router
