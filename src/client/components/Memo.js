@@ -102,6 +102,22 @@ export class Memo extends Component {
         })
     }
     
+    shouldComponentUpdate(nextProps, nextState) {
+        let current = {
+            props: this.props,
+            state: this.state
+        }
+
+        let next = {
+            props: nextProps,
+            state: nextState
+        }
+
+        let update = JSON.stringify(current) !== JSON.stringify(next)
+
+        return update
+    }
+    
     render() {
         const { data, ownership } = this.props
         const dropDownMenu = (

@@ -25,6 +25,12 @@ export class MemoList extends Component {
             console.error('onStar function not defined')
         }
     }
+
+    shouldComponentUpdate(nextProps, nextState) {
+        let update = JSON.stringify(this.props) !== JSON.stringify(nextProps)
+        return update
+    }
+    
     render() {
         const mapToComponents = (data) => {
             return data.map((memo, i) => {
