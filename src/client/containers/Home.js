@@ -1,7 +1,12 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { Write, MemoList } from 'components'
-import { memoPostRequest, memoListRequest, memoEditRequest, memoRemoveRequest } from 'actions/memo'
+import { 
+    memoPostRequest,
+    memoListRequest, 
+    memoEditRequest, 
+    memoRemoveRequest,
+    memoStarRequest } from 'actions/memo'
 
 export class Home extends Component {
     state = {
@@ -148,6 +153,31 @@ export class Home extends Component {
         )
     }
     
+    handleStar = (id, index) => {
+        this.props.memoStarRequest(id, index).then(
+            () => {
+                if(this.props.starStatus.status !== 'SUCCESS') {
+                    let errorMessage = [
+                        'Something broke',
+                        'You are not logged in',
+                        'That memo does not exist'
+                    ];
+
+
+                    // NOTIFY ERROR
+                    let $toastContent = $('<span style="color: #FFB4BA">' + errorMessage[this.props.starStatus.error % 1000 - 1] + '</span>');
+                    Materialize.toast($toastContent, 2000);
+
+
+                    // IF NOT LOGGED IN, REFRESH THE PAGE
+                    if (this.props.starStatus.error === 2) {
+                        setTimeout(() => { this.props.location.reload(false) }, 2000);
+                    }
+                }
+            }
+        )
+    }
+    
     componentDidMount() {
         //load new memo every 5sec
         const loadMemoLoop = () => {
@@ -218,7 +248,8 @@ export class Home extends Component {
                 <MemoList data={this.props.memoData}
                     currentUser={this.props.currentUser}
                     onEdit={this.handleEdit}
-                    onRemove={this.handleRemove}/>
+                    onRemove={this.handleRemove}
+                    onStar={this.handleStar}/>
             </div>
         )
     }
@@ -234,6 +265,7 @@ const mapStateToProps = (state) => {
         isLast: state.memo.list.isLast,
         editStatus: state.memo.edit,
         removeStatus: state.memo.remove,
+        starStatus: state.memo.star
     }
 }
 
@@ -250,6 +282,9 @@ const mapDispatchToProps = (dispatch) => {
         },
         memoRemoveRequest: (id, index) => {
             return dispatch(memoRemoveRequest(id, index))
+        },
+        memoStarRequest: (id, index) => {
+            return dispatch(memoStarRequest(id, index))
         }
     }
 }

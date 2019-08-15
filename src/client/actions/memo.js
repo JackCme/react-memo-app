@@ -158,3 +158,41 @@ export const memoRemoveFailure = (error) => {
         error
     }
 }
+
+export const memoStarRequest = (id, index) => {
+    return dispatch => {
+        dispatch(memoStar())
+
+        return axios.post('/api/memo/star/' + id, {index})
+                    .then(response => {
+                        dispatch(memoStarSuccess(index, response.data.memo))
+                    })
+                    .catch(error => {
+                        dispatch(memoStarFailure(error.response.data.code))
+                    })
+    }
+}
+
+export const memoStar = () => {
+    return {
+        type: types.MEMO_STAR
+    }
+}
+
+export const memoStarSuccess = (index, memo) => {
+    return {
+        type: types.MEMO_STAR_SUCCESS,
+        index,
+        memo,
+    }   
+}
+
+export const memoStarFailure = (error) => {
+    return {
+        type: types.MEMO_STAR_FAILURE,
+        error
+    }
+}
+
+
+

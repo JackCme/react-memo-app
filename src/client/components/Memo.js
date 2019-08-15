@@ -13,6 +13,9 @@ export class Memo extends Component {
         onEdit: PropTypes.func,
         index: PropTypes.number,
         onRemove: PropTypes.func,
+        onStar: PropTypes.func,
+        starStatus: PropTypes.object,
+        currentUser: PropTypes.string
     }
 
     static defaultProps = {
@@ -34,7 +37,12 @@ export class Memo extends Component {
         onRemove: (id, index) => {
             console.error('onRemove function not defined')
         },
-        index: -1
+        onStar: (id, index) => {
+            console.error('onStar function not defined')
+        },
+        index: -1,
+        starStatus: {},
+        currentUser: ''
     }
 
     toggleEdit = () => {
@@ -68,6 +76,14 @@ export class Memo extends Component {
         let id = this.props.data._id
         let index = this.props.index
         this.props.onRemove(id, index)
+    }
+    
+    handleStar = () => {
+        console.log(this.props)
+        console.log(this.state)
+        let id = this.props.data._id
+        let index = this.props.index
+        this.props.onStar(id, index)
     }
     
     componentDidUpdate(prevProps, prevState) {
@@ -105,6 +121,11 @@ export class Memo extends Component {
         const editedInfo = (
             <span style={{ color: '#AAB5BC' }}> · Edited <TimeAgo date={new Date(this.props.data.date.edited)} live={true} /></span>
         );
+
+        // IF IT IS STARRED ( CHECKS WHETHER THE NICKNAME EXISTS IN THE ARRAY )
+        // RETURN STYLE THAT HAS A YELLOW COLOR
+        const starStyle = (this.props.data.starred.indexOf(this.props.currentUser) > -1) ? { color: '#ff9980' } : {};
+
         const memoView = (
             <div className="card">
                 <div className="info">
@@ -116,7 +137,9 @@ export class Memo extends Component {
                     {data.contents}
                 </div>
                 <div className="footer">
-                    <i className="material-icons log-footer-icon star icon-button">star</i>
+                    <i className="material-icons log-footer-icon star icon-button"
+                        style={starStyle}
+                        onClick={this.handleStar}>star</i>
                     <span className="star-count">{data.starred.length}</span>
                 </div>
             </div>

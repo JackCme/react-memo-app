@@ -239,4 +239,66 @@ router.get('/:listType/:id', (req, res) => {
     }
 })
 
+/**
+|--------------------------------------------------
+| Toggles star of Memo: POST /api/memo/start/:id
+| Error codes:
+|   1001: INVALID ID
+|   1002: NOT LOGGED IN
+|   1003: NO RESOURCES
+|--------------------------------------------------
+*/
+router.post('/star/:id', (req, res) => {
+    //check memo id validity
+    if(!mongoose.Types.ObjectId.isValid(req.params.id)) {
+        return res.status(400).json({
+            error: "INVALID ID",
+            code: 1001
+        })
+    }
+
+    //check login status
+    if(typeof req.session.loginInfo === 'undefined') {
+        return res.status(403).json({
+            error: 'NOT LOGGED IN',
+            code: 1002,
+        })
+    }
+
+    //find memo
+    Memo.findById(req.params.id, (err, memo) => {
+        if(err) throw err
+
+        //memo does not exists
+        if(!memo) {
+            return res.status(404).json({
+                error: "NO RESOURCE",
+                code: 1003,
+            })
+        }
+
+        //get index of username in the array
+        let index = memo.starred.indexOf(req.session.loginInfo.username)
+
+        //check if user already given star
+        let hasStarred = (index === -1) ? false : true
+
+        if(!hasStarred) {
+            memo.starred.push(req.session.loginInfo.username)
+        }
+        else {
+            memo.starred.splice(index, 1)
+        }
+
+        memo.save((err, memo) => {
+            if(err) throw err
+            res.json({
+                success: true,
+                'hasStarred': !hasStarred,
+                memo
+            })
+        })
+    })
+})
+
 export default router

@@ -9,6 +9,7 @@ export class MemoList extends Component {
         currentUser: PropTypes.string,
         onEdit: PropTypes.func,
         onRemove: PropTypes.func,
+        onStar: PropTypes.func
     }
 
     static defaultProps = {
@@ -19,6 +20,9 @@ export class MemoList extends Component {
         },
         onRemove: (id, index) => {
             console.error('remove function not defined')
+        },
+        onStar: (id, index) => {
+            console.error('onStar function not defined')
         }
     }
     render() {
@@ -35,6 +39,8 @@ export class MemoList extends Component {
                             index={i}
                             onEdit={this.props.onEdit}
                             onRemove={this.props.onRemove}
+                            onStar={this.props.onStar}
+                            currentUser={this.props.currentUser}
                         />
                     </CSSTransition>
                     
