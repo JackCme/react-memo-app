@@ -7,6 +7,7 @@ export class MemoList extends Component {
         data: PropTypes.array,
         currentUser: PropTypes.string,
         onEdit: PropTypes.func,
+        onRemove: PropTypes.func,
     }
 
     static defaultProps = {
@@ -14,6 +15,9 @@ export class MemoList extends Component {
         currentUser: '',
         onEdit: (id, index, contents) => {
             console.error('edit function not defined')
+        },
+        onRemove: (id, index) => {
+            console.error('remove function not defined')
         }
     }
     render() {
@@ -26,6 +30,7 @@ export class MemoList extends Component {
                         key={memo._id}
                         index={i}
                         onEdit={this.props.onEdit}
+                        onRemove={this.props.onRemove}
                         />
                 )
             })

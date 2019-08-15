@@ -11,7 +11,8 @@ export class Memo extends Component {
         data: PropTypes.object,
         ownership: PropTypes.bool,
         onEdit: PropTypes.func,
-        index: PropTypes.number
+        index: PropTypes.number,
+        onRemove: PropTypes.func,
     }
 
     static defaultProps = {
@@ -29,6 +30,9 @@ export class Memo extends Component {
         ownership: true,
         onEdit: (id, index, contents) => {
             console.error('onEdit function not defined')
+        },
+        onRemove: (id, index) => {
+            console.error('onRemove function not defined')
         },
         index: -1
     }
@@ -60,6 +64,11 @@ export class Memo extends Component {
         })
     }
     
+    handleRemove = () => {
+        let id = this.props.data._id
+        let index = this.props.index
+        this.props.onRemove(id, index)
+    }
     
     componentDidUpdate(prevProps, prevState) {
         //when component updates, initialize dropdown

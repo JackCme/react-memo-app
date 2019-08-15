@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { Write, MemoList } from 'components'
-import { memoPostRequest, memoListRequest, memoEditRequest } from 'actions/memo'
+import { memoPostRequest, memoListRequest, memoEditRequest, memoRemoveRequest } from 'actions/memo'
 
 export class Home extends Component {
     state = {
@@ -114,6 +114,39 @@ export class Home extends Component {
         )
     }
     
+    handleRemove = (id, index) => {
+        this.props.memoRemoveRequest(id, index).then(
+            () => {
+                if(this.props.removeStatus.status === 'SUCCESS') {
+                    //load more memo if there is no scroll bar
+                    //1sec later. (animation takes 1sec)
+                    setTimeout(() => {
+                        if($("body").height() < $(window).height()) {
+                            this.loadOldMemo()
+                        }
+                    }, 1000);
+                }
+                else {
+                    let errorMessage = [
+                        'Something broke',
+                        'You are not logged in',
+                        'That memo does not exist',
+                        'You do not have permission'
+                    ];
+
+                    // NOTIFY ERROR
+                    let $toastContent = $('<span style="color: #FFB4BA">' + errorMessage[this.props.removeStatus.error % 1000 - 1] + '</span>');
+                    Materialize.toast($toastContent, 2000);
+
+
+                    // IF NOT LOGGED IN, REFRESH THE PAGE
+                    if (this.props.removeStatus.error === 2) {
+                        setTimeout(() => { location.reload(false) }, 2000);
+                    }
+                }
+            }
+        )
+    }
     
     componentDidMount() {
         //load new memo every 5sec
@@ -184,7 +217,8 @@ export class Home extends Component {
                 { this.props.isLoggedIn ? write : undefined }
                 <MemoList data={this.props.memoData}
                     currentUser={this.props.currentUser}
-                    onEdit={this.handleEdit}/>
+                    onEdit={this.handleEdit}
+                    onRemove={this.handleRemove}/>
             </div>
         )
     }
@@ -198,7 +232,8 @@ const mapStateToProps = (state) => {
         memoData: state.memo.list.data,
         listStatus: state.memo.list.status,
         isLast: state.memo.list.isLast,
-        editStatus: state.memo.edit
+        editStatus: state.memo.edit,
+        removeStatus: state.memo.remove,
     }
 }
 
@@ -212,6 +247,9 @@ const mapDispatchToProps = (dispatch) => {
         },
         memoEditRequest: (id, index, contents) => {
             return dispatch(memoEditRequest(id, index, contents))
+        },
+        memoRemoveRequest: (id, index) => {
+            return dispatch(memoRemoveRequest(id, index))
         }
     }
 }

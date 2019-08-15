@@ -123,3 +123,38 @@ export const memoEditFailure = (error) => {
         error
     }
 }
+
+export const memoRemoveRequest = (id, index) => {
+    return dispatch => {
+        dispatch(memoRemove())
+
+        return axios.delete('/api/memo' + id)
+                    .then(response => {
+                        dispatch(memoRemoveSuccess(index))
+                    })
+                    .catch(error => {
+                        dispatch(memoRemoveFailure(error.response.data.code))
+                    })
+    }
+}
+
+export const memoRemove = () => {
+    return {
+        type: types.MEMO_REMOVE
+    }
+}
+
+
+export const memoRemoveSuccess = (index) => {
+    return {
+        type: types.MEMO_REMOVE_SUCCESS,
+        index
+    }
+}
+
+export const memoRemoveFailure = (error) => {
+    return {
+        type: types.MEMO_REMOVE_FAILURE,
+        error
+    }
+}
